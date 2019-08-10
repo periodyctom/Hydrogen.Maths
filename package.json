@@ -1,7 +1,7 @@
 {
-	"name": "com.periodyc.hmaths",
+	"name": "com.periodyc.hydrogen.maths",
 	"version": "0.1.0",
-	"displayName": "Hydrogen.Maths",
+	"displayName": "Periodyc Hydrogen Maths",
 	"description": "Hydrogen.Maths is a math utility library intended to add functions on top of Unity.Mathematics, in addition to our own custom math functions.",
 	"unity": "2019.1",
 	"dependencies": {
