@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using static Unity.Mathematics.math;
 
 namespace Hydrogen.Maths
 {
@@ -17,7 +18,7 @@ namespace Hydrogen.Maths
         {
             unchecked
             {
-                return (byte) ((1 << length) - 1);
+                return (byte) ((byte) (1ul << length) - 1);
             }
         }
 
@@ -31,7 +32,7 @@ namespace Hydrogen.Maths
         {
             unchecked
             {
-                return (ushort) ((1 << length) - 1);
+                return (ushort) ((ushort)(1ul << length) - 1);
             }
         }
 
@@ -45,7 +46,7 @@ namespace Hydrogen.Maths
         {
             unchecked
             {
-                return (uint) ((1 << length) - 1);
+                return (uint)(1ul << length) - 1;
             }
         }
 
@@ -59,7 +60,7 @@ namespace Hydrogen.Maths
         {
             unchecked
             {
-                return (ulong) ((1 << length) - 1);
+                return select(0ul, 1ul << length, length < 64) - 1ul;
             }
         }
 
@@ -119,6 +120,25 @@ namespace Hydrogen.Maths
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Get(uint field, byte length, sbyte offset) => (field >> offset) & UintMask(length);
+        
+        /// <summary>
+        /// Gets a bit pattern starting at the LSB.
+        /// </summary>
+        /// <param name="field">Bit field to extract from.</param>
+        /// <param name="length">Length of sub-field to extract.</param>
+        /// <returns>The extracted sub-field.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Get(ulong field, byte length) => field & UlongMask(length);
+
+        /// <summary>
+        /// Gets a bit pattern starting at the given offset.
+        /// </summary>
+        /// <param name="field">Bit field to extract from.</param>
+        /// <param name="length">Length of sub-field to extract.</param>
+        /// <param name="offset">Offset into the bit field from the LSB.</param>
+        /// <returns>The extracted sub-field.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ulong Get(ulong field, byte length, sbyte offset) => (field >> offset) & UlongMask(length);
 
         /// <summary>
         /// Sets a part of a bit field with the given value, starting at the LSB.
