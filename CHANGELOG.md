@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.0] - 2019-08-19
+- Fixed some naming inconsistencies with BitPack functions and test suite.
+- Added BitUtils.Swap functions with overloads for byte, ushort, uint, and ulong.
+- Added complete BitUtils Test Suite
+
 ## [0.1.2] - 2019-08-12
 - Add missing `BitPack` ulong getters and setters. Should have been
   there from the start.

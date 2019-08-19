@@ -1,101 +1,142 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 using NUnit.Framework;
 using Unity.Jobs;
 using Unity.Burst;
+// ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
 
 // ReSharper disable once CheckNamespace
 namespace Hydrogen.Maths.Tests
 {
+    [TestFixture]
     public class BitPackTests
     {
         [BurstCompile(CompileSynchronously = true)]
-        [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
-        struct TestJob : IJob
+        private struct TestJob : IJob
         {
             public void Execute()
             {
-                // byte
-                byte field0 = 0;
+                TestByteGetAndSet();
+                TestUShortGetAndSet();
+                TestUIntGetAndSet();
+                TestULongGetAndSet();
+            }
+        }
+        
+        [BurstDiscard]
+        private static void Validate<T>(T low, T high, T expectedLow, T expectedHigh)
+            where T : unmanaged, IEquatable<T>
+        {
+            Assert.That(low.Equals(expectedLow), $"Unexpected Value {low:x}, should be: {expectedLow:x}!");
+            Assert.That(high.Equals(expectedHigh), $"Unexpected Value {high:x}, should be: {expectedHigh:x}!");
+        }
 
-                field0 = BitPack.Set(field0, 0xA, 4);
-                field0 = BitPack.Set(field0, 0xB, 4, 4);
+        private static void TestByteGetAndSet()
+        {
+            byte field = 0;
 
-                Validate(BitPack.Get(field0, 4), BitPack.Get(field0, 4, 4), 0xA, 0xB);
-                
-                //ushort
-                ushort field1 = 0;
-
-                field1 = BitPack.Set(field1, 0xAA, 8);
-                field1 = BitPack.Set(field1, 0xBB, 8, 8);
-                
-                Validate(BitPack.Get(field1, 8), BitPack.Get(field1, 8, 8), 0xAA, 0xBB);
-                
-                field1 = 0;
-                field1 = BitPack.Set(field1, 1, 1);
-                field1 = BitPack.Set(field1, 0xAA, 8, 1);
-                
-                Validate(BitPack.Get(field1, 1), BitPack.Get(field1, 8, 1), 1, 0xAA);
-                
-                //uint
-                uint field2 = 0;
-
-                field2 = BitPack.Set(field2, 0xAAAA, 16);
-                field2 = BitPack.Set(field2, 0xBBBB, 16, 16);
-                Validate(BitPack.Get(field2, 16), BitPack.Get(field2, 16, 16), 0xAAAA, 0xBBBB);
-                
-                field2 = 0;
-                field2 = BitPack.Set(field2, 1, 1);
-                field2 = BitPack.Set(field2, 0xAA, 8, 1);
-                Validate(BitPack.Get(field2, 1), BitPack.Get(field2, 8, 1), 1, 0xAA);
-                
-                //ulong
-                ulong field3 = 0;
-
-                field3 = BitPack.Set(field3, 0xAAAA_AAAA, 32);
-                field3 = BitPack.Set(field3, 0xBBBB_BBBB, 32, 32);
-                Validate(BitPack.Get(field3, 32), BitPack.Get(field3, 32, 32), 0xAAAA_AAAA, 0xBBBB_BBBB);
+            const byte expectedLow = 0xA;
+            const byte expectedHigh = 0xB;
             
-                field3 = 0;
-                field3 = BitPack.Set(field3, 1, 1);
-                field3 = BitPack.Set(field3, 0xAAAA, 16, 1);
-                Validate( BitPack.Get(field3, 1), BitPack.Get(field3, 16, 1), 1, 0xAAAA);
-            }
-            
-            [BurstDiscard]
-            public void Validate(byte subFieldLow, byte subFieldHigh, byte expectedLow, byte expectedHigh)
-            {
-                Assert.That(subFieldLow == expectedLow, $"Unexpected Value {subFieldLow:x1}, should be: {expectedHigh:x1}!");
-                Assert.That(subFieldHigh == expectedHigh, $"Unexpected Value {subFieldHigh:x1}, should be: {expectedLow:x1}!");
-            }
+            field = BitPack.Set(field, expectedLow, 4);
+            field = BitPack.Set(field, expectedHigh, 4, 4);
 
-            [BurstDiscard]
-            public void Validate(ushort subFieldLow, ushort subFieldHigh, ushort expectedLow, ushort expectedHigh)
-            {
-                Assert.That(subFieldLow == expectedLow, $"Unexpected Value {subFieldLow:x2}, should be: {expectedHigh:x2}!");
-                Assert.That(subFieldHigh == expectedHigh, $"Unexpected Value {subFieldHigh:x2}, should be: {expectedLow:x2}!");
-            }
+            byte subFieldLow = BitPack.Get(field, 4);
+            byte subFieldHigh = BitPack.Get(field, 4, 4); 
             
-            [BurstDiscard]
-            public void Validate(uint subFieldLow, uint subFieldHigh, uint expectedLow, uint expectedHigh)
-            {
-                Assert.That(subFieldLow == expectedLow, $"Unexpected Value {subFieldLow:x4}, should be: {expectedHigh:x4}!");
-                Assert.That(subFieldHigh == expectedHigh, $"Unexpected Value {subFieldHigh:x4}, should be: {expectedLow:x4}!");
-            }
+            Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
+        }
+
+        private static void TestUShortGetAndSet()
+        {
+            ushort field = 0;
+
+            const ushort expectedLow = 0xAA;
+            const ushort expectedHigh = 0xBB;
             
-            [BurstDiscard]
-            public void Validate(ulong subFieldLow, ulong subFieldHigh, ulong expectedLow, ulong expectedHigh)
-            {
-                Assert.That(subFieldLow == expectedLow, $"Unexpected Value {subFieldLow:x8}, should be: {expectedHigh:x8}!");
-                Assert.That(subFieldHigh == expectedHigh, $"Unexpected Value {subFieldHigh:x8}, should be: {expectedLow:x8}!");
-            }
+            field = BitPack.Set(field, expectedLow, 8);
+            field = BitPack.Set(field, expectedHigh, 8, 8);
+
+            ushort subFieldLow = BitPack.Get(field, 8);
+            ushort subFieldHigh = BitPack.Get(field, 8, 8);
+
+            Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
+
+            const ushort one = 1;
+            const ushort subField = 0xA;
+            
+            field = 0;
+            field = BitPack.Set(field, one, 1);
+            field = BitPack.Set(field, subField, 8, 1);
+            
+            subFieldLow = BitPack.Get(field, 1);
+            subFieldHigh = BitPack.Get(field, 8, 1);
+            
+            Validate(subFieldLow, subFieldHigh, one, subField);
+        }
+
+        private static void TestUIntGetAndSet()
+        {
+            uint field = 0;
+
+            const uint expectedLow = 0xAAAAu;
+            const uint expectedHigh = 0xBBBBu;
+            
+            field = BitPack.Set(field, expectedLow, 16);
+            field = BitPack.Set(field, expectedHigh, 16, 16);
+
+            uint subFieldLow = BitPack.Get(field, 16);
+            uint subFieldHigh = BitPack.Get(field, 16, 16); 
+            
+            Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
+            
+            const uint one = 1u;
+            const uint subField = 0xAAu;
+            
+            field = 0;
+            field = BitPack.Set(field, one, 1);
+            field = BitPack.Set(field, subField, 8, 1);
+            
+            subFieldLow = BitPack.Get(field, 1);
+            subFieldHigh = BitPack.Get(field, 8, 1);
+            
+            Validate(subFieldLow, subFieldHigh, one, subField);
+        }
+
+        private static void TestULongGetAndSet()
+        {
+            ulong field = 0;
+
+            const ulong expectedLow = 0xAAAA_AAAAul;
+            const ulong expectedHigh = 0xBBBB_BBBBul;
+
+            field = BitPack.Set(field, expectedLow, 32);
+            field = BitPack.Set(field, expectedHigh, 32, 32);
+
+            ulong subFieldLow = BitPack.Get(field, 32);
+            ulong subFieldHigh = BitPack.Get(field, 32, 32); 
+            
+            Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
+
+            const ulong one = 1ul;
+            const ulong subField = 0xAAAAul;
+            
+            field = 0;
+            field = BitPack.Set(field, one, 1);
+            field = BitPack.Set(field, subField, 16, 1);
+            
+            subFieldLow = BitPack.Get(field, 1);
+            subFieldHigh = BitPack.Get(field, 16, 1);
+            
+            Validate(subFieldLow, subFieldHigh, one, subField);
         }
 
         [Test]
-        public void EnsureAllKindsWorkInBurst()
+        public void EnsureBitPackWorksInBurst()
         {
             new TestJob().Run();
+            new TestJob().Schedule().Complete();
         }
-        
+
         [Test]
         public void EnsureByteMasksAreCorrectLengths()
         {
@@ -107,78 +148,69 @@ namespace Hydrogen.Maths.Tests
         }
 
         [Test]
-        public void EnsureUshortMasksAreCorrectLengths()
+        public void EnsureUShortMasksAreCorrectLengths()
         {
-            Assert.That(BitPack.UshortMask(0) == 0x0, "A mask of size 0 should be 0x0!");
-            Assert.That(BitPack.UshortMask(1) == 0x1, "A mask of size 1 should be 0x1!");
-            Assert.That(BitPack.UshortMask(2) == 0x3, "A mask of size 2 should be 0x3!");
-            Assert.That(BitPack.UshortMask(4) == 0xF, "A mask of size 4 should be 0xF!");
-            Assert.That(BitPack.UshortMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
+            Assert.That(BitPack.UShortMask(0) == 0x0, "A mask of size 0 should be 0x0!");
+            Assert.That(BitPack.UShortMask(1) == 0x1, "A mask of size 1 should be 0x1!");
+            Assert.That(BitPack.UShortMask(2) == 0x3, "A mask of size 2 should be 0x3!");
+            Assert.That(BitPack.UShortMask(4) == 0xF, "A mask of size 4 should be 0xF!");
+            Assert.That(BitPack.UShortMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
             
-            Assert.That(BitPack.UshortMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
-            Assert.That(BitPack.UshortMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
+            Assert.That(BitPack.UShortMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
+            Assert.That(BitPack.UShortMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
         }
-        
+
         [Test]
-        public void EnsureUintMasksAreCorrectLengths()
+        public void EnsureUIntMasksAreCorrectLengths()
         {
-            Assert.That(BitPack.UintMask(0) == 0x0, "A mask of size 0 should be 0x0!");
-            Assert.That(BitPack.UintMask(1) == 0x1, "A mask of size 1 should be 0x1!");
-            Assert.That(BitPack.UintMask(2) == 0x3, "A mask of size 2 should be 0x3!");
-            Assert.That(BitPack.UintMask(4) == 0xF, "A mask of size 4 should be 0xF!");
-            Assert.That(BitPack.UintMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
+            Assert.That(BitPack.UIntMask(0) == 0x0, "A mask of size 0 should be 0x0!");
+            Assert.That(BitPack.UIntMask(1) == 0x1, "A mask of size 1 should be 0x1!");
+            Assert.That(BitPack.UIntMask(2) == 0x3, "A mask of size 2 should be 0x3!");
+            Assert.That(BitPack.UIntMask(4) == 0xF, "A mask of size 4 should be 0xF!");
+            Assert.That(BitPack.UIntMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
             
-            Assert.That(BitPack.UintMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
-            Assert.That(BitPack.UintMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
+            Assert.That(BitPack.UIntMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
+            Assert.That(BitPack.UIntMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
             
-            Assert.That(BitPack.UintMask(20) == 0xF_FFFF, "A mask of size 20 should be 0xF_FFFF!");
-            Assert.That(BitPack.UintMask(24) == 0xFF_FFFF, "A mask of size 24 should be 0xFF_FFFF!");
-            Assert.That(BitPack.UintMask(28) == 0xFFF_FFFF, "A mask of size 28 should be 0xFFF_FFFF!");
-            Assert.That(BitPack.UintMask(32) == 0xFFFF_FFFF, "A mask of size 32 should be 0xFFFF_FFFF");
+            Assert.That(BitPack.UIntMask(20) == 0xF_FFFF, "A mask of size 20 should be 0xF_FFFF!");
+            Assert.That(BitPack.UIntMask(24) == 0xFF_FFFF, "A mask of size 24 should be 0xFF_FFFF!");
+            Assert.That(BitPack.UIntMask(28) == 0xFFF_FFFF, "A mask of size 28 should be 0xFFF_FFFF!");
+            Assert.That(BitPack.UIntMask(32) == 0xFFFF_FFFF, "A mask of size 32 should be 0xFFFF_FFFF");
         }
-        
+
         [Test]
-        public void EnsureUlongMasksAreCorrectLengths()
+        public void EnsureULongMasksAreCorrectLengths()
         {
-            Assert.That(BitPack.UlongMask(0) == 0x0, "A mask of size 0 should be 0x0!");
-            Assert.That(BitPack.UlongMask(1) == 0x1, "A mask of size 1 should be 0x1!");
-            Assert.That(BitPack.UlongMask(2) == 0x3, "A mask of size 2 should be 0x3!");
-            Assert.That(BitPack.UlongMask(4) == 0xF, "A mask of size 4 should be 0xF!");
-            Assert.That(BitPack.UlongMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
+            Assert.That(BitPack.ULongMask(0) == 0x0, "A mask of size 0 should be 0x0!");
+            Assert.That(BitPack.ULongMask(1) == 0x1, "A mask of size 1 should be 0x1!");
+            Assert.That(BitPack.ULongMask(2) == 0x3, "A mask of size 2 should be 0x3!");
+            Assert.That(BitPack.ULongMask(4) == 0xF, "A mask of size 4 should be 0xF!");
+            Assert.That(BitPack.ULongMask(8) == 0xFF, "A mask of size 8 should be 0xFF!");
             
-            Assert.That(BitPack.UlongMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
-            Assert.That(BitPack.UlongMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
+            Assert.That(BitPack.ULongMask(12) == 0xFFF, "A mask of size 12 should be 0xFFF!");
+            Assert.That(BitPack.ULongMask(16) == 0xFFFF, "A mask of size 16 should be 0xFFFF!");
             
-            Assert.That(BitPack.UlongMask(20) == 0xF_FFFF, "A mask of size 20 should be 0xF_FFFF!");
-            Assert.That(BitPack.UlongMask(24) == 0xFF_FFFF, "A mask of size 24 should be 0xFF_FFFF!");
-            Assert.That(BitPack.UlongMask(28) == 0xFFF_FFFF, "A mask of size 28 should be 0xFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(32) == 0xFFFF_FFFF, "A mask of size 32 should be 0xFFFF_FFFF");
+            Assert.That(BitPack.ULongMask(20) == 0xF_FFFF, "A mask of size 20 should be 0xF_FFFF!");
+            Assert.That(BitPack.ULongMask(24) == 0xFF_FFFF, "A mask of size 24 should be 0xFF_FFFF!");
+            Assert.That(BitPack.ULongMask(28) == 0xFFF_FFFF, "A mask of size 28 should be 0xFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(32) == 0xFFFF_FFFF, "A mask of size 32 should be 0xFFFF_FFFF");
             
-            Assert.That(BitPack.UlongMask(36) == 0xF_FFFF_FFFF, "A mask of size 36 should be 0xF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(40) == 0xFF_FFFF_FFFF, "A mask of size 40 should be 0xFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(44) == 0xFFF_FFFF_FFFF, "A mask of size 44 should be 0xFFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(48) == 0xFFFF_FFFF_FFFF, "A mask of size 48 should be 0xFFFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(52) == 0xF_FFFF_FFFF_FFFF, "A mask of size 52 should be 0xF_FFFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(56) == 0xFF_FFFF_FFFF_FFFF, "A mask of size 56 should be 0xFF_FFFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(60) == 0xFFF_FFFF_FFFF_FFFF, "A mask of size 60 should be 0xFFF_FFFF_FFFF_FFFF!");
-            Assert.That(BitPack.UlongMask(64) == 0xFFFF_FFFF_FFFF_FFFF, "A mask of size 64 should be 0xFFFF_FFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(36) == 0xF_FFFF_FFFF, "A mask of size 36 should be 0xF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(40) == 0xFF_FFFF_FFFF, "A mask of size 40 should be 0xFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(44) == 0xFFF_FFFF_FFFF, "A mask of size 44 should be 0xFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(48) == 0xFFFF_FFFF_FFFF, "A mask of size 48 should be 0xFFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(52) == 0xF_FFFF_FFFF_FFFF, "A mask of size 52 should be 0xF_FFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(56) == 0xFF_FFFF_FFFF_FFFF, "A mask of size 56 should be 0xFF_FFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(60) == 0xFFF_FFFF_FFFF_FFFF, "A mask of size 60 should be 0xFFF_FFFF_FFFF_FFFF!");
+            Assert.That(BitPack.ULongMask(64) == 0xFFFF_FFFF_FFFF_FFFF, "A mask of size 64 should be 0xFFFF_FFFF_FFFF_FFFF!");
         }
 
         [Test]
         public void DoesByteGetAndSetWorkCorrectly()
         {
-            byte field = 0;
-
-            field = BitPack.Set(field, 0xA, 4);
-            field = BitPack.Set(field, 0xB, 4, 4);
-
-            byte subFieldLow = BitPack.Get(field, 4);
-            byte subFieldHigh = BitPack.Get(field, 4, 4); 
-            
-            Assert.That(subFieldLow == 0xA, $"Unexpected Value {subFieldLow:x1}, should be: 0xA!");
-            Assert.That(subFieldHigh == 0xB, $"Unexpected Value {subFieldHigh:x1}, should be: 0xB!");
+            TestByteGetAndSet();
         }
-        
+
         [Test]
         public void CanCarelessUserCorruptByte()
         {
@@ -198,34 +230,15 @@ namespace Hydrogen.Maths.Tests
             Assert.That(subFieldHigh != 0xB, $"Unexpected Value {subFieldHigh:x1}, should NOT be: 0xB!");
             Assert.That(subFieldOops == 0x3, $"Unexpected Value {subFieldOops:x1}, should be: 0x3!");
         }
-        
+
         [Test]
-        public void DoesUshortGetAndSetWorkCorrectly()
+        public void DoesUShortGetAndSetWorkCorrectly()
         {
-            ushort field = 0;
-
-            field = BitPack.Set(field, 0xAA, 8);
-            field = BitPack.Set(field, 0xBB, 8, 8);
-
-            ushort subFieldLow = BitPack.Get(field, 8);
-            ushort subFieldHigh = BitPack.Get(field, 8, 8); 
-            
-            Assert.That(subFieldLow == 0xAA, $"Unexpected Value {subFieldLow:x2}, should be: 0xAA!");
-            Assert.That(subFieldHigh == 0xBB, $"Unexpected Value {subFieldHigh:x2}, should be: 0xBB!");
-            
-            field = 0;
-            field = BitPack.Set(field, 1, 1);
-            field = BitPack.Set(field, 0xAA, 8, 1);
-            
-            subFieldLow = BitPack.Get(field, 1);
-            subFieldHigh = BitPack.Get(field, 8, 1);
-            
-            Assert.That(subFieldLow == 1, $"Unexpected Value {subFieldLow:x2}, should be: 1!");
-            Assert.That(subFieldHigh == 0xAA, $"Unexpected Value {subFieldHigh:x2}, should be: 0xAA!");
+            TestUShortGetAndSet();
         }
         
         [Test]
-        public void CanCarelessUserCorruptUshort()
+        public void CanCarelessUserCorruptUShort()
         {
             ushort field = 0;
 
@@ -245,32 +258,13 @@ namespace Hydrogen.Maths.Tests
         }
         
         [Test]
-        public void DoesUintGetAndSetWorkCorrectly()
+        public void DoesUIntGetAndSetWorkCorrectly()
         {
-            uint field = 0;
-
-            field = BitPack.Set(field, 0xAAAA, 16);
-            field = BitPack.Set(field, 0xBBBB, 16, 16);
-
-            uint subFieldLow = BitPack.Get(field, 16);
-            uint subFieldHigh = BitPack.Get(field, 16, 16); 
-            
-            Assert.That(subFieldLow == 0xAAAA, $"Unexpected Value {subFieldLow:x4}, should be: 0xAAAA!");
-            Assert.That(subFieldHigh == 0xBBBB, $"Unexpected Value {subFieldHigh:x4}, should be: 0xBBBB!");
-            
-            field = 0;
-            field = BitPack.Set(field, 1, 1);
-            field = BitPack.Set(field, 0xAA, 8, 1);
-            
-            subFieldLow = BitPack.Get(field, 1);
-            subFieldHigh = BitPack.Get(field, 8, 1);
-            
-            Assert.That(subFieldLow == 1, $"Unexpected Value {subFieldLow:x4}, should be: 1!");
-            Assert.That(subFieldHigh == 0xAA, $"Unexpected Value {subFieldHigh:x4}, should be: 0xAA!");
+            TestUIntGetAndSet();
         }
         
         [Test]
-        public void CanCarelessUserCorruptUint()
+        public void CanCarelessUserCorruptUInt()
         {
             uint field = 0;
 
@@ -290,32 +284,13 @@ namespace Hydrogen.Maths.Tests
         }
         
         [Test]
-        public void DoesUlongGetAndSetWorkCorrectly()
+        public void DoesULongGetAndSetWorkCorrectly()
         {
-            ulong field = 0;
-
-            field = BitPack.Set(field, 0xAAAA_AAAA, 32);
-            field = BitPack.Set(field, 0xBBBB_BBBB, 32, 32);
-
-            ulong subFieldLow = BitPack.Get(field, 32);
-            ulong subFieldHigh = BitPack.Get(field, 32, 32); 
-            
-            Assert.That(subFieldLow == 0xAAAA_AAAA, $"Unexpected Value {subFieldLow:x8}, should be: 0xAAAAAAAA!");
-            Assert.That(subFieldHigh == 0xBBBB_BBBB, $"Unexpected Value {subFieldHigh:x8}, should be: 0xBBBBBBBB!");
-            
-            field = 0;
-            field = BitPack.Set(field, 1, 1);
-            field = BitPack.Set(field, 0xAAAA, 16, 1);
-            
-            subFieldLow = BitPack.Get(field, 1);
-            subFieldHigh = BitPack.Get(field, 16, 1);
-            
-            Assert.That(subFieldLow == 1, $"Unexpected Value {subFieldLow:x8}, should be: 1!");
-            Assert.That(subFieldHigh == 0xAAAA, $"Unexpected Value {subFieldHigh:x8}, should be: 0xAAAA!");
+            TestULongGetAndSet();
         }
         
         [Test]
-        public void CanCarelessUserCorruptUlong()
+        public void CanCarelessUserCorruptULong()
         {
             ulong field = 0;
 

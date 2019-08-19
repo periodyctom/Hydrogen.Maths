@@ -28,7 +28,7 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of the mask in bits.</param>
         /// <returns>The mask bit pattern.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ushort UshortMask(byte length)
+        public static ushort UShortMask(byte length)
         {
             unchecked
             {
@@ -42,7 +42,7 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of the mask in bits.</param>
         /// <returns>The mask bit pattern.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint UintMask(byte length)
+        public static uint UIntMask(byte length)
         {
             unchecked
             {
@@ -56,7 +56,7 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of the mask in bits.</param>
         /// <returns>The mask bit pattern.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong UlongMask(byte length)
+        public static ulong ULongMask(byte length)
         {
             unchecked
             {
@@ -89,7 +89,7 @@ namespace Hydrogen.Maths
         /// <param name="field">Bit field to extract from.</param>
         /// <param name="length">Length of sub-field to extract.</param>
         /// <returns>The extracted sub-field.</returns>
-        public static ushort Get(ushort field, byte length) => (ushort) (field & UshortMask(length));
+        public static ushort Get(ushort field, byte length) => (ushort) (field & UShortMask(length));
 
         /// <summary>
         /// Gets a bit pattern starting at the given offset.
@@ -100,7 +100,7 @@ namespace Hydrogen.Maths
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort Get(ushort field, byte length, sbyte offset) =>
-            (ushort) ((field >> offset) & UshortMask(length));
+            (ushort) ((field >> offset) & UShortMask(length));
 
         /// <summary>
         /// Gets a bit pattern starting at the LSB.
@@ -109,7 +109,7 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of sub-field to extract.</param>
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Get(uint field, byte length) => field & UintMask(length);
+        public static uint Get(uint field, byte length) => field & UIntMask(length);
 
         /// <summary>
         /// Gets a bit pattern starting at the given offset.
@@ -119,7 +119,7 @@ namespace Hydrogen.Maths
         /// <param name="offset">Offset into the bit field from the LSB.</param>
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Get(uint field, byte length, sbyte offset) => (field >> offset) & UintMask(length);
+        public static uint Get(uint field, byte length, sbyte offset) => (field >> offset) & UIntMask(length);
         
         /// <summary>
         /// Gets a bit pattern starting at the LSB.
@@ -128,7 +128,7 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of sub-field to extract.</param>
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Get(ulong field, byte length) => field & UlongMask(length);
+        public static ulong Get(ulong field, byte length) => field & ULongMask(length);
 
         /// <summary>
         /// Gets a bit pattern starting at the given offset.
@@ -138,7 +138,7 @@ namespace Hydrogen.Maths
         /// <param name="offset">Offset into the bit field from the LSB.</param>
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ulong Get(ulong field, byte length, sbyte offset) => (field >> offset) & UlongMask(length);
+        public static ulong Get(ulong field, byte length, sbyte offset) => (field >> offset) & ULongMask(length);
 
         /// <summary>
         /// Sets a part of a bit field with the given value, starting at the LSB.
@@ -177,9 +177,9 @@ namespace Hydrogen.Maths
         /// <param name="length">Length of sub-field to set.</param>
         /// <returns>The modified bit field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ushort Set(ushort field, short value, byte length)
+        public static ushort Set(ushort field, ushort value, byte length)
         {
-            ushort mask = UshortMask(length);
+            ushort mask = UShortMask(length);
             return (ushort) ((field & ~mask) | (value & mask));
         }
 
@@ -192,9 +192,9 @@ namespace Hydrogen.Maths
         /// <param name="offset">Offset into the bit field from the LSB.</param>
         /// <returns>The extracted sub-field.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ushort Set(ushort field, short value, byte length, sbyte offset)
+        public static ushort Set(ushort field, ushort value, byte length, sbyte offset)
         {
-            ushort mask = UshortMask(length);
+            ushort mask = UShortMask(length);
             return (ushort) ((field & ~(mask << offset)) | ((value & mask) << offset));
         }
 
@@ -208,7 +208,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Set(uint field, uint value, byte length)
         {
-            uint mask = UintMask(length);
+            uint mask = UIntMask(length);
             return (field & ~mask) | (value & mask);
         }
 
@@ -223,7 +223,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Set(uint field, uint value, byte length, sbyte offset)
         {
-            uint mask = UintMask(length);
+            uint mask = UIntMask(length);
             return (field & ~(mask << offset)) | ((value & mask) << offset);
         }
 
@@ -237,7 +237,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Set(ulong field, ulong value, byte length)
         {
-            ulong mask = UlongMask(length);
+            ulong mask = ULongMask(length);
             return (field & ~mask) | (value & mask);
         }
 
@@ -252,7 +252,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Set(ulong field, ulong value, byte length, sbyte offset)
         {
-            ulong mask = UlongMask(length);
+            ulong mask = ULongMask(length);
             return (field & ~(mask << offset)) | ((value & mask) << offset);
         }
     }
