@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1] - 2020-02-17
+- Added Byte and Ushort to bool matrix functions
+- Added int4x4 select wrapper
+- style adjustments to be more in line with Unity standards
+
 ## [0.2.0] - 2019-08-19
 - Fixed some naming inconsistencies with BitPack functions and test suite.
 - Added BitUtils.Swap functions with overloads for byte, ushort, uint, and ulong.

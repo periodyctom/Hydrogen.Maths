@@ -6,22 +6,12 @@ using Unity.Jobs;
 namespace Hydrogen.Maths.Tests
 {
     [TestFixture]
-    public class BitUtilsTests
+    public class BitUtilsSwapTests
     {
-        private const byte kByteBefore = 0x0F;
-        private const byte kByteAfter = 0xF0;
-
-        private const ushort kUShortBefore = 0x00FF;
-        private const ushort kUShortAfter = 0xFF00;
-
-        private const uint kUIntBefore = 0x0000FFFF;
-        private const uint kUIntAfter = 0xFFFF0000;
-
-        private const ulong kULongBefore = 0x00000000FFFFFFFF;
-        private const ulong kULongAfter = 0xFFFFFFFF00000000;
+        
         
         [BurstCompile(CompileSynchronously = true)]
-        private struct TestJob : IJob
+        struct TestJob : IJob
         {
             public void Execute()
             {
@@ -36,167 +26,167 @@ namespace Hydrogen.Maths.Tests
         }
         
         [BurstDiscard]
-        private static void Validate<T>(T test, T before, T after)
+        static void Validate<T>(T test, T before, T after)
             where T : unmanaged, IEquatable<T>
         {
             Assert.That(test.Equals(after), $"There was an error swapping the bits! {test}");
             Assert.That(!test.Equals(before), $"Test didn't change from initial bits! {test}");
         }
 
-        private static void TestByteSimple()
+        static void TestByteSimple()
         {
-            byte test = kByteBefore;
+            var test = TestConstants.ByteBefore;
 
             for (byte i = 0; i < 4; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 4);
+                var first = i;
+                var second = (byte) (i + 4);
 
                 test = BitUtils.Swap(test, first, second);
             }
             
-            Validate(test, kByteBefore, kByteAfter);
+            Validate(test, TestConstants.ByteBefore, TestConstants.ByteAfter);
         }
 
-        private static void TestByteComplex()
+        static void TestByteComplex()
         {
-            byte test = kByteBefore;
+            var test = TestConstants.ByteBefore;
             
             for (byte i = 0; i < 4; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 4);
+                var first = i;
+                var second = (byte) (i + 4);
 
                 test = BitUtils.Swap(test, first, second, 1);
             }
 
-            Validate(test, kByteBefore, kByteAfter);
+            Validate(test, TestConstants.ByteBefore, TestConstants.ByteAfter);
 
             test = BitUtils.Swap(test, 0, 4, 4);
             
-            Validate(test, kByteAfter, kByteBefore);
+            Validate(test, TestConstants.ByteAfter, TestConstants.ByteBefore);
 
             test = BitUtils.Swap(test, 0, 4, 2);
             test = BitUtils.Swap(test, 2, 6, 2);
             
-            Validate(test, kByteBefore, kByteAfter);
+            Validate(test, TestConstants.ByteBefore, TestConstants.ByteAfter);
         }
 
-        private static void TestUShortSimple()
+        static void TestUShortSimple()
         {
-            ushort test = kUShortBefore;
+            var test = TestConstants.UShortBefore;
 
             for (byte i = 0; i < 8; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 8);
+                var first = i;
+                var second = (byte) (i + 8);
 
                 test = BitUtils.Swap(test, first, second);
             }
 
-            Validate(test, kUShortBefore, kUShortAfter);
+            Validate(test, TestConstants.UShortBefore, TestConstants.UShortAfter);
         }
 
-        private static void TestUShortComplex()
+        static void TestUShortComplex()
         {
-            ushort test = kUShortBefore;
+            var test = TestConstants.UShortBefore;
             
             for (byte i = 0; i < 8; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 8);
+                var first = i;
+                var second = (byte) (i + 8);
 
                 test = BitUtils.Swap(test, first, second, 1);
             }
 
-            Validate(test, kUShortBefore, kUShortAfter);
+            Validate(test, TestConstants.UShortBefore, TestConstants.UShortAfter);
 
             test = BitUtils.Swap(test, 0, 8, 8);
             
-            Validate(test, kUShortAfter, kUShortBefore);
+            Validate(test, TestConstants.UShortAfter, TestConstants.UShortBefore);
 
             test = BitUtils.Swap(test, 0, 8, 4);
             test = BitUtils.Swap(test, 4, 12, 4);
             
-            Validate(test, kUShortBefore, kUShortAfter);
+            Validate(test, TestConstants.UShortBefore, TestConstants.UShortAfter);
         }
 
-        private static void TestUIntSimple()
+        static void TestUIntSimple()
         {
-            uint test = kUIntBefore;
+            var test = TestConstants.UIntBefore;
 
             for (byte i = 0; i < 16; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 16);
+                var first = i;
+                var second = (byte) (i + 16);
 
                 test = BitUtils.Swap(test, first, second);
             }
             
-            Validate(test, kUIntBefore, kUIntAfter);
+            Validate(test, TestConstants.UIntBefore, TestConstants.UIntAfter);
         }
 
-        private static void TestUIntComplex()
+        static void TestUIntComplex()
         {
-            uint test = kUIntBefore;
+            var test = TestConstants.UIntBefore;
             
             for (byte i = 0; i < 16; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 16);
+                var first = i;
+                var second = (byte) (i + 16);
 
                 test = BitUtils.Swap(test, first, second, 1);
             }
             
-            Validate(test, kUIntBefore, kUIntAfter);
+            Validate(test, TestConstants.UIntBefore, TestConstants.UIntAfter);
 
             test = BitUtils.Swap(test, 0, 16, 16);
             
-            Validate(test, kUIntAfter, kUIntBefore);
+            Validate(test, TestConstants.UIntAfter, TestConstants.UIntBefore);
 
             test = BitUtils.Swap(test, 0, 16, 8);
             test = BitUtils.Swap(test, 8, 24, 8);
             
-            Validate(test, kUIntBefore, kUIntAfter);
+            Validate(test, TestConstants.UIntBefore, TestConstants.UIntAfter);
         }
 
-        private static void TestULongSimple()
+        static void TestULongSimple()
         {
-            ulong test = kULongBefore;
+            var test = TestConstants.ULongBefore;
 
             for (byte i = 0; i < 32; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 32);
+                var first = i;
+                var second = (byte) (i + 32);
 
                 test = BitUtils.Swap(test, first, second);
             }
             
-            Validate(test, kULongBefore, kULongAfter);
+            Validate(test, TestConstants.ULongBefore, TestConstants.ULongAfter);
         }
 
-        private static void TestULongComplex()
+        static void TestULongComplex()
         {
-            ulong test = kULongBefore;
+            var test = TestConstants.ULongBefore;
             
             for (byte i = 0; i < 32; i++)
             {
-                byte first = i;
-                byte second = (byte) (i + 32);
+                var first = i;
+                var second = (byte) (i + 32);
 
                 test = BitUtils.Swap(test, first, second, 1);
             }
             
-            Validate(test, kULongBefore, kULongAfter);
+            Validate(test, TestConstants.ULongBefore, TestConstants.ULongAfter);
 
             test = BitUtils.Swap(test, 0, 32, 32);
             
-            Validate(test, kULongAfter, kULongBefore);
+            Validate(test, TestConstants.ULongAfter, TestConstants.ULongBefore);
 
             test = BitUtils.Swap(test, 0, 32, 16);
             test = BitUtils.Swap(test, 16, 48, 16);
             
-            Validate(test, kULongBefore, kULongAfter);
+            Validate(test, TestConstants.ULongBefore, TestConstants.ULongAfter);
         }
         
         [Test]

@@ -150,7 +150,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte Set(byte field, byte value, byte length)
         {
-            byte mask = ByteMask(length);
+            var mask = ByteMask(length);
             return (byte) ((field & ~mask) | (value & mask));
         }
 
@@ -165,7 +165,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte Set(byte field, byte value, byte length, sbyte offset)
         {
-            byte mask = ByteMask(length);
+            var mask = ByteMask(length);
             return (byte) ((field & ~(mask << offset)) | ((value & mask) << offset));
         }
 
@@ -179,7 +179,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort Set(ushort field, ushort value, byte length)
         {
-            ushort mask = UShortMask(length);
+            var mask = UShortMask(length);
             return (ushort) ((field & ~mask) | (value & mask));
         }
 
@@ -194,7 +194,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ushort Set(ushort field, ushort value, byte length, sbyte offset)
         {
-            ushort mask = UShortMask(length);
+            var mask = UShortMask(length);
             return (ushort) ((field & ~(mask << offset)) | ((value & mask) << offset));
         }
 
@@ -208,7 +208,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Set(uint field, uint value, byte length)
         {
-            uint mask = UIntMask(length);
+            var mask = UIntMask(length);
             return (field & ~mask) | (value & mask);
         }
 
@@ -223,7 +223,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Set(uint field, uint value, byte length, sbyte offset)
         {
-            uint mask = UIntMask(length);
+            var mask = UIntMask(length);
             return (field & ~(mask << offset)) | ((value & mask) << offset);
         }
 
@@ -237,7 +237,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Set(ulong field, ulong value, byte length)
         {
-            ulong mask = ULongMask(length);
+            var mask = ULongMask(length);
             return (field & ~mask) | (value & mask);
         }
 
@@ -252,7 +252,7 @@ namespace Hydrogen.Maths
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ulong Set(ulong field, ulong value, byte length, sbyte offset)
         {
-            ulong mask = ULongMask(length);
+            var mask = ULongMask(length);
             return (field & ~(mask << offset)) | ((value & mask) << offset);
         }
     }

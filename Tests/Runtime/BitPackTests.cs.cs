@@ -4,14 +4,13 @@ using Unity.Jobs;
 using Unity.Burst;
 // ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
 
-// ReSharper disable once CheckNamespace
 namespace Hydrogen.Maths.Tests
 {
     [TestFixture]
     public class BitPackTests
     {
         [BurstCompile(CompileSynchronously = true)]
-        private struct TestJob : IJob
+        struct TestJob : IJob
         {
             public void Execute()
             {
@@ -23,14 +22,14 @@ namespace Hydrogen.Maths.Tests
         }
         
         [BurstDiscard]
-        private static void Validate<T>(T low, T high, T expectedLow, T expectedHigh)
+        static void Validate<T>(T low, T high, T expectedLow, T expectedHigh)
             where T : unmanaged, IEquatable<T>
         {
             Assert.That(low.Equals(expectedLow), $"Unexpected Value {low:x}, should be: {expectedLow:x}!");
             Assert.That(high.Equals(expectedHigh), $"Unexpected Value {high:x}, should be: {expectedHigh:x}!");
         }
 
-        private static void TestByteGetAndSet()
+        static void TestByteGetAndSet()
         {
             byte field = 0;
 
@@ -40,13 +39,13 @@ namespace Hydrogen.Maths.Tests
             field = BitPack.Set(field, expectedLow, 4);
             field = BitPack.Set(field, expectedHigh, 4, 4);
 
-            byte subFieldLow = BitPack.Get(field, 4);
-            byte subFieldHigh = BitPack.Get(field, 4, 4); 
+            var subFieldLow = BitPack.Get(field, 4);
+            var subFieldHigh = BitPack.Get(field, 4, 4); 
             
             Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
         }
 
-        private static void TestUShortGetAndSet()
+        static void TestUShortGetAndSet()
         {
             ushort field = 0;
 
@@ -56,8 +55,8 @@ namespace Hydrogen.Maths.Tests
             field = BitPack.Set(field, expectedLow, 8);
             field = BitPack.Set(field, expectedHigh, 8, 8);
 
-            ushort subFieldLow = BitPack.Get(field, 8);
-            ushort subFieldHigh = BitPack.Get(field, 8, 8);
+            var subFieldLow = BitPack.Get(field, 8);
+            var subFieldHigh = BitPack.Get(field, 8, 8);
 
             Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
 
@@ -74,7 +73,7 @@ namespace Hydrogen.Maths.Tests
             Validate(subFieldLow, subFieldHigh, one, subField);
         }
 
-        private static void TestUIntGetAndSet()
+        static void TestUIntGetAndSet()
         {
             uint field = 0;
 
@@ -84,8 +83,8 @@ namespace Hydrogen.Maths.Tests
             field = BitPack.Set(field, expectedLow, 16);
             field = BitPack.Set(field, expectedHigh, 16, 16);
 
-            uint subFieldLow = BitPack.Get(field, 16);
-            uint subFieldHigh = BitPack.Get(field, 16, 16); 
+            var subFieldLow = BitPack.Get(field, 16);
+            var subFieldHigh = BitPack.Get(field, 16, 16); 
             
             Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
             
@@ -102,7 +101,7 @@ namespace Hydrogen.Maths.Tests
             Validate(subFieldLow, subFieldHigh, one, subField);
         }
 
-        private static void TestULongGetAndSet()
+        static void TestULongGetAndSet()
         {
             ulong field = 0;
 
@@ -112,8 +111,8 @@ namespace Hydrogen.Maths.Tests
             field = BitPack.Set(field, expectedLow, 32);
             field = BitPack.Set(field, expectedHigh, 32, 32);
 
-            ulong subFieldLow = BitPack.Get(field, 32);
-            ulong subFieldHigh = BitPack.Get(field, 32, 32); 
+            var subFieldLow = BitPack.Get(field, 32);
+            var subFieldHigh = BitPack.Get(field, 32, 32); 
             
             Validate(subFieldLow, subFieldHigh, expectedLow, expectedHigh);
 
@@ -222,9 +221,9 @@ namespace Hydrogen.Maths.Tests
             // oops!
             field = BitPack.Set(field, 0x3, 6, 2);
             
-            byte subFieldLow = BitPack.Get(field, 4);
-            byte subFieldHigh = BitPack.Get(field, 4, 4);
-            byte subFieldOops = BitPack.Get(field, 6, 2);
+            var subFieldLow = BitPack.Get(field, 4);
+            var subFieldHigh = BitPack.Get(field, 4, 4);
+            var subFieldOops = BitPack.Get(field, 6, 2);
             
             Assert.That(subFieldLow != 0xA, $"Unexpected Value {subFieldLow:x1}, should NOT be: 0xA!");
             Assert.That(subFieldHigh != 0xB, $"Unexpected Value {subFieldHigh:x1}, should NOT be: 0xB!");
@@ -248,9 +247,9 @@ namespace Hydrogen.Maths.Tests
             // oops!
             field = BitPack.Set(field, 0xAB, 8, 4);
             
-            ushort subFieldLow = BitPack.Get(field, 8);
-            ushort subFieldHigh = BitPack.Get(field, 8, 8);
-            ushort subFieldOops = BitPack.Get(field, 8, 4);
+            var subFieldLow = BitPack.Get(field, 8);
+            var subFieldHigh = BitPack.Get(field, 8, 8);
+            var subFieldOops = BitPack.Get(field, 8, 4);
             
             Assert.That(subFieldLow != 0xAA, $"Unexpected Value {subFieldLow:x2}, should NOT be: 0xAA!");
             Assert.That(subFieldHigh != 0xBB, $"Unexpected Value {subFieldHigh:x2}, should NOT be: 0xBB!");
@@ -274,9 +273,9 @@ namespace Hydrogen.Maths.Tests
             // oops!
             field = BitPack.Set(field, 0xABAB, 16, 8);
             
-            uint subFieldLow = BitPack.Get(field, 16);
-            uint subFieldHigh = BitPack.Get(field, 16, 16);
-            uint subFieldOops = BitPack.Get(field, 16, 8);
+            var subFieldLow = BitPack.Get(field, 16);
+            var subFieldHigh = BitPack.Get(field, 16, 16);
+            var subFieldOops = BitPack.Get(field, 16, 8);
             
             Assert.That(subFieldLow != 0xAAAA, $"Unexpected Value {subFieldLow:x4}, should NOT be: 0xAAAA!");
             Assert.That(subFieldHigh != 0xBBBB, $"Unexpected Value {subFieldHigh:x4}, should NOT be: 0xBBBB!");
@@ -300,9 +299,9 @@ namespace Hydrogen.Maths.Tests
             // oops!
             field = BitPack.Set(field, 0xABAB_ABAB, 32, 16);
             
-            ulong subFieldLow = BitPack.Get(field, 32);
-            ulong subFieldHigh = BitPack.Get(field, 32, 32);
-            ulong subFieldOops = BitPack.Get(field, 32, 16);
+            var subFieldLow = BitPack.Get(field, 32);
+            var subFieldHigh = BitPack.Get(field, 32, 32);
+            var subFieldOops = BitPack.Get(field, 32, 16);
             
             Assert.That(subFieldLow != 0xAAAA_AAAA, $"Unexpected Value {subFieldLow:x8}, should NOT be: 0xAAAAAAAA!");
             Assert.That(subFieldHigh != 0xBBBB_BBBB, $"Unexpected Value {subFieldHigh:x8}, should NOT be: 0xBBBBBBBB!");
